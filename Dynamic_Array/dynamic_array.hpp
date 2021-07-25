@@ -3,7 +3,7 @@
 
 /*   
  *  Random access sequence container (array)
- *  that can automatically handle it's size when needed.
+ *  that can automatically handle its size when needed.
 */
 
 #include <iostream>         // Debugging
