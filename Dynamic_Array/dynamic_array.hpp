@@ -19,11 +19,11 @@ namespace ds
     public:
         // Constructors, Destructors; Gang of Four
 
-        // Default - Constructs an empty container with selected or default initial capacity
-        explicit dynamic_array(unsigned int capacity = INIT_CAPACITY);
+        // Default - Constructs an empty container with selected or default initial m_capacity
+        explicit dynamic_array(unsigned int m_capacity = INIT_CAPACITY);
 
         // Fill Constructor
-        explicit dynamic_array(unsigned int capacity, const T &element);
+        explicit dynamic_array(unsigned int m_capacity, const T &element);
 
         // Constructs a container with a copy of each of the elements in il, in the same order.
         dynamic_array(const std::initializer_list<T> &i_list);
@@ -66,6 +66,8 @@ namespace ds
         // Information methods
         unsigned int size() const;
 
+        unsigned int capacity() const;
+
         bool empty() const;
 
         int find() const;
@@ -76,7 +78,7 @@ namespace ds
 
     private:
         T *data;
-        unsigned int m_size, capacity;
+        unsigned int m_size, m_capacity;
         // iterator
 
         ///
@@ -86,9 +88,9 @@ namespace ds
         friend void swap(dynamic_array &first, dynamic_array &second)
         {
             using std::swap;
-            swap(first.data, second.data);         // Swaps data pointers
-            swap(first.capacity, second.capacity); // Swaps capacity
-            swap(first.m_size, second.m_size);     // Swaps m_size
+            swap(first.data, second.data);             // Swaps data pointers
+            swap(first.m_capacity, second.m_capacity); // Swaps m_capacity
+            swap(first.m_size, second.m_size);         // Swaps m_size
         }
         void reservem_size();
     };
@@ -97,23 +99,23 @@ namespace ds
     /* new T <=> throws bad_alloc if allocation functions report failure to allocate storage.*/
 
     template <class T>
-    inline dynamic_array<T>::dynamic_array(unsigned int capacity)
-        : capacity(capacity), m_size(0)
+    inline dynamic_array<T>::dynamic_array(unsigned int m_capacity)
+        : m_capacity(m_capacity), m_size(0)
     {
-        if (capacity == 0)
-            throw std::invalid_argument("Invalid initial capacity!");
+        if (m_capacity == 0)
+            throw std::invalid_argument("Invalid initial m_capacity!");
 
-        data = new T[capacity];
+        data = new T[m_capacity];
     }
 
     template <class T>
-    inline dynamic_array<T>::dynamic_array(unsigned int capacity, const T &element)
-        : capacity(capacity), m_size(capacity)
+    inline dynamic_array<T>::dynamic_array(unsigned int m_capacity, const T &element)
+        : m_capacity(m_capacity), m_size(m_capacity)
     {
-        if (capacity == 0)
-            throw std::invalid_argument("Invalid initial capacity!");
+        if (m_capacity == 0)
+            throw std::invalid_argument("Invalid initial m_capacity!");
 
-        data = new T[capacity];
+        data = new T[m_capacity];
         // T::operator= might fail to copy and throw exception
         try
         {
@@ -170,7 +172,7 @@ namespace ds
     template <class T>
     inline void dynamic_array<T>::push_back(const T &el)
     {
-        if (m_size >= capacity)
+        if (m_size >= m_capacity)
         {
             reservem_size();
         }
@@ -196,7 +198,7 @@ namespace ds
         delete[] data;
         data = nullptr;
         m_size = 0;
-        capacity = 0;
+        m_capacity = 0;
     }
 
     // Helpers
@@ -205,8 +207,8 @@ namespace ds
     template <class T>
     inline void dynamic_array<T>::copyFrom(const dynamic_array<T> &src)
     {
-        capacity = src.capacity;
-        data = new T[capacity]; // Might throws bad_alloc
+        m_capacity = src.m_capacity;
+        data = new T[m_capacity]; // Might throws bad_alloc
         for (unsigned int i = 0; i < src.m_size; i++)
         {
             data[i] = src.data[i];
@@ -219,8 +221,8 @@ namespace ds
     template <class T>
     inline void dynamic_array<T>::reservem_size()
     {
-        unsigned int newCapacity = capacity ? capacity * 2 : INIT_CAPACITY;
-        T *temp = new T[newCapacity];
+        unsigned int new_capacity = m_capacity ? m_capacity * 2 : INIT_CAPACITY;
+        T *temp = new T[new_capacity];
 
         for (unsigned int i = 0; i < m_size; i++)
             temp[i] = data[i];
@@ -228,7 +230,7 @@ namespace ds
         delete[] data;
         data = temp;
 
-        capacity = newCapacity;
+        m_capacity = new_capacity;
     }
 
     // Random access operations (operator [], front, back, at)
@@ -314,6 +316,12 @@ namespace ds
         return m_size;
     }
 
+    template <class T>
+    inline unsigned int dynamic_array<T>::capacity() const
+    {
+        return m_capacity;
+    }
+
     // O(1) - Constant time
     template <class T>
     inline bool dynamic_array<T>::empty() const
@@ -325,7 +333,7 @@ namespace ds
     template <typename T>
     inline void dynamic_array<T>::printInfo(std::ostream &os) const
     {
-        os << "Address: 0x" << this << "\nBuffer Address 0x" << data << "\nm_size: " << m_size << "\nCapacity: " << capacity << std::endl;
+        os << "Address: 0x" << this << "\nBuffer Address 0x" << data << "\nm_size: " << m_size << "\nm_capacity: " << m_capacity << std::endl;
     }
 };
 
