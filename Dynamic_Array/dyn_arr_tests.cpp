@@ -141,4 +141,51 @@ TEST_CASE("DEFAULT OPERATIONS", "[OPERATIONS]")
         REQUIRE_THROWS(def.back());
         REQUIRE_THROWS(def.pop_back());
     }
+
+    SECTION("EQUAL COMPARISON OPERATOR")
+    {
+        dynamic_array<int> foo = {1, 2, 3, 4, 5};
+        dynamic_array<int> boo = {1, 2, 3, 4, 5};
+
+        REQUIRE(foo == boo);
+    }
+
+    SECTION("INSERT")
+    {
+        const int ELEMENT = 56, POS = 0;
+        dynamic_array<int> foo = {1, 2, 3, 4, 5};
+        dynamic_array<int> expect = {ELEMENT, 1, 2, 3, 4, 5};
+
+        foo.insert(POS, ELEMENT);
+
+        REQUIRE(foo == expect);
+        REQUIRE_THROWS(foo.insert(foo.size(), ELEMENT));
+        REQUIRE_THROWS(foo.insert(foo.size() + ELEMENT, ELEMENT));
+    }
+
+    SECTION("ERASE AND CLEAR")
+    {
+        const int POS1 = 0, POS2 = 2, POS3 = 2;
+        const int SIZE = 5;
+        dynamic_array<int> foo = {1, 2, 3, 4, 5};
+        dynamic_array<int> expect1 = {2, 3, 4, 5};
+        dynamic_array<int> expect2 = {2, 3, 5};
+        dynamic_array<int> expect3 = {2, 3};
+
+        foo.erase(POS1);
+        CHECK(foo.size() == SIZE - 1);
+        REQUIRE(foo == expect1);
+
+        foo.erase(POS2);
+        CHECK(foo.size() == SIZE - 2);
+        REQUIRE(foo == expect2);
+
+        foo.erase(POS3);
+        CHECK(foo.size() == SIZE - 3);
+        REQUIRE(foo == expect3);
+
+        foo.clear();
+        REQUIRE(foo.size() == 0);
+        REQUIRE_THROWS(foo.at(0));
+    }
 }

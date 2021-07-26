@@ -39,10 +39,15 @@ namespace ds
         // Destructor
         ~dynamic_array();
 
-        // Dynamic Array Basic Operations
+        ///
+        // Basic Operations
+
+        // Add one element to the back
         void push_back(const T &el);
 
-        ///
+        // Insert an element
+        void insert(unsigned int position, const T &val);
+
         // Access operators
         const T &operator[](unsigned int index) const;
         T &operator[](unsigned int index);
@@ -62,6 +67,9 @@ namespace ds
         // Remove operations
         void pop_back();
 
+        // Erease an element from selected position
+        void erase(unsigned int position);
+
         void clear();
 
         ///
@@ -73,6 +81,9 @@ namespace ds
         bool empty() const;
 
         int find() const;
+
+        // Comparison operators
+        bool operator==(const dynamic_array &other) const;
 
         // Debug info methods
     public:
@@ -180,6 +191,40 @@ namespace ds
 
         data[m_size] = el;
         ++m_size;
+    }
+
+    // O(n) - Linear time
+    template <class T>
+    inline void dynamic_array<T>::insert(unsigned int position, const T &val)
+    {
+        if (position >= m_size)
+        {
+            throw std::invalid_argument("Invalid insert position!");
+        }
+
+        this->push_back(val); // Guarantee enough capacity
+        for (int i = m_size - 1; i > position; i--)
+        {
+            data[i] = data[i - 1];
+        }
+
+        data[position] = val;
+    }
+
+    // O(n) - Linear time
+    template <class T>
+    inline void dynamic_array<T>::erase(unsigned int position)
+    {
+        if (position >= m_size)
+        {
+            throw std::invalid_argument("Invalid insert position!");
+        }
+
+        for (size_t i = position; i < m_size - 1; i++)
+        {
+            data[i] = data[i + 1];
+        }
+        --m_size;
     }
 
     // O(1) - Constant time
@@ -310,7 +355,21 @@ namespace ds
         return data[m_size - 1];
     }
 
-    // O(1) - Constant time
+    template <class T>
+    inline bool dynamic_array<T>::operator==(const dynamic_array &other) const
+    {
+        if (this->m_size != other.m_size)
+            return false;
+
+        for (size_t i = 0; i < other.m_size; i++)
+        {
+            if (data[i] != other.data[i])
+                return false;
+        }
+
+        return true;
+    }
+
     template <class T>
     inline unsigned int dynamic_array<T>::size() const
     {
@@ -323,7 +382,6 @@ namespace ds
         return m_capacity;
     }
 
-    // O(1) - Constant time
     template <class T>
     inline bool dynamic_array<T>::empty() const
     {
