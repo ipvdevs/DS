@@ -53,4 +53,92 @@ TEST_CASE("CONSTRUCTORS_DESTRUCTOR", "[CONSTRUCTOR][DESTRUCTOR]")
         CHECK(foo.at(0) == ELEMENT);
         REQUIRE(EQUAL_FALG);
     }
+
+    SECTION("CONSTRUCTOR WITH IL")
+    {
+        const int EXPECTED_SIZE = 3;
+
+        dynamic_array<char> foo = {'a', 'b', 'c'};
+        bool EQUAL_FALG = foo[0] == 'a' && foo[1] == 'b' && foo[2] == 'c';
+
+        REQUIRE(foo.size() == EXPECTED_SIZE);
+        REQUIRE(foo.capacity() == EXPECTED_SIZE);
+        REQUIRE(EQUAL_FALG);
+    }
+
+    SECTION("COPY CONSTRUCTOR")
+    {
+        const int NUM = 3, SIZE = 3;
+        dynamic_array<char> foo(SIZE, NUM);
+
+        dynamic_array<char> bar(foo);
+        dynamic_array<char> baz = bar;
+
+        CHECK(bar.capacity() == foo.capacity());
+        REQUIRE(bar.size() == foo.size());
+        REQUIRE(bar.at(0) == foo.at(0));
+
+        CHECK(baz.capacity() == foo.capacity());
+        REQUIRE(baz.size() == foo.size());
+        REQUIRE(baz.at(0) == foo.at(0));
+    }
+
+    SECTION("OPERATOR=")
+    {
+        const int NUM = 3, SIZE = 3;
+        dynamic_array<char> foo(SIZE, NUM);
+
+        dynamic_array<char> bar;
+        bar = foo;
+
+        REQUIRE(bar.size() == foo.size());
+        REQUIRE(bar.capacity() == foo.capacity());
+        REQUIRE(bar.at(0) == foo.at(0));
+    }
+}
+
+TEST_CASE("DEFAULT OPERATIONS", "[OPERATIONS]")
+{
+    SECTION("PUSH BACK AND RESERVE SIZE")
+    {
+        const size_t MIN_CAPACITY = 1; // Set min possible capacity
+        const u_short NUM_COUNT = 2;
+        int randNum1 = rand(), randNum2 = rand(); // Generate two random number
+        dynamic_array<int> def(MIN_CAPACITY);     // Construct structure with min capacity
+
+        CHECK(def.size() == 0);
+        CHECK(def.empty());
+        CHECK(def.capacity() == MIN_CAPACITY);
+
+        def.push_back(randNum1);
+        def.push_back(randNum2);
+
+        CHECK(def.size() == NUM_COUNT);
+        REQUIRE_FALSE(def.empty());
+        REQUIRE(def.capacity() == GROWTH_RATE * MIN_CAPACITY);
+        REQUIRE(def[0] == randNum1);
+        REQUIRE(def[1] == randNum2);
+    }
+
+    SECTION("POP BACK, FRONT, BACK")
+    {
+        const size_t MIN_CAPACITY = 1;            // Set min possible capacity
+        const u_short NUM_COUNT = 2;              // Count of random numbers generated
+        int randNum1 = rand(), randNum2 = rand(); // Generate two random number
+        dynamic_array<int> def(MIN_CAPACITY);     // Construct structure with min capacity
+
+        def.push_back(randNum1);
+        def.push_back(randNum2);
+
+        REQUIRE(def.front() == randNum1);
+        REQUIRE(def.back() == randNum2);
+
+        REQUIRE_NOTHROW(def.pop_back());
+        CHECK(def.front() == def.back());
+        REQUIRE_NOTHROW(def.pop_back());
+
+        REQUIRE_THROWS(def.front());
+        REQUIRE_THROWS(def.back());
+        REQUIRE_THROWS(def.pop_back());
+    }
 }

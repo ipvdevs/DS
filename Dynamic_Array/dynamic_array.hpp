@@ -9,10 +9,12 @@
 #include <iostream>         // Debugging
 #include <initializer_list> // C++ 11
 
-#define INIT_CAPACITY 16
-
 namespace ds
 {
+
+#define INIT_CAPACITY 16
+#define GROWTH_RATE 2
+
     template <class T>
     class dynamic_array
     {
@@ -79,7 +81,6 @@ namespace ds
     private:
         T *data;
         unsigned int m_size, m_capacity;
-        // iterator
 
         ///
         // Helpers
@@ -92,7 +93,7 @@ namespace ds
             swap(first.m_capacity, second.m_capacity); // Swaps m_capacity
             swap(first.m_size, second.m_size);         // Swaps m_size
         }
-        void reservem_size();
+        void reserve_size();
     };
 
     /* one-definition rule (ODR) <=> inline */
@@ -174,7 +175,7 @@ namespace ds
     {
         if (m_size >= m_capacity)
         {
-            reservem_size();
+            reserve_size();
         }
 
         data[m_size] = el;
@@ -208,7 +209,7 @@ namespace ds
     inline void dynamic_array<T>::copyFrom(const dynamic_array<T> &src)
     {
         m_capacity = src.m_capacity;
-        data = new T[m_capacity]; // Might throws bad_alloc
+        data = new T[m_capacity]; // Might throw bad_alloc
         for (unsigned int i = 0; i < src.m_size; i++)
         {
             data[i] = src.data[i];
@@ -219,9 +220,9 @@ namespace ds
     }
 
     template <class T>
-    inline void dynamic_array<T>::reservem_size()
+    inline void dynamic_array<T>::reserve_size()
     {
-        unsigned int new_capacity = m_capacity ? m_capacity * 2 : INIT_CAPACITY;
+        unsigned int new_capacity = m_capacity ? m_capacity * GROWTH_RATE : INIT_CAPACITY;
         T *temp = new T[new_capacity];
 
         for (unsigned int i = 0; i < m_size; i++)
