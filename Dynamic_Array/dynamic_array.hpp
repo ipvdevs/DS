@@ -80,10 +80,111 @@ namespace ds
 
         bool empty() const;
 
-        int find() const;
+        // int find() const; TODO
 
         // Comparison operators
         bool operator==(const dynamic_array &other) const;
+
+        ///
+        // Iterator - pointer behaviour
+        class Iterator
+        {
+            friend class dynamic_array;
+
+        public:
+            Iterator &operator++() // prefix
+            {
+                ++m_ptr;
+                return *this;
+            }
+
+            Iterator operator++(int) // postfix
+            {
+                Iterator copy(*this);
+                ++(*this);
+                return copy;
+            }
+
+            Iterator &operator--() // prefix
+            {
+                --m_ptr;
+                return *this;
+            }
+
+            Iterator operator--(int) // postfix
+            {
+                Iterator copy(*this);
+                --(*this);
+                return copy;
+            }
+
+            // Operator[] is consciously omitted
+
+            const T operator*() const
+            {
+                return *m_ptr;
+            }
+
+            T operator*()
+            {
+                return *m_ptr;
+            }
+
+            const T *operator->() const
+            {
+                return m_ptr;
+            }
+
+            T *operator->()
+            {
+                return m_ptr;
+            }
+
+            // Comparison operators
+            bool operator==(const Iterator &other) const
+            {
+                return this->m_ptr == other.m_ptr;
+            }
+
+            bool operator!=(const Iterator &other) const
+            {
+                return !(*this == other);
+            }
+
+            bool operator<(const Iterator &other) const
+            {
+                return m_ptr < other.m_ptr;
+            }
+
+            bool operator>(const Iterator &other) const
+            {
+                return other < *this;
+            }
+
+            bool operator>=(const Iterator &other) const
+            {
+                return !(*this < other);
+            }
+            bool operator<=(const Iterator &other) const
+            {
+                return !(*this > other);
+            }
+
+        private:
+            // Private ctor - Forbid user to create iterator
+            // The parent class is responsible for the above-mentioned action
+            
+            Iterator(T *m_ptr = nullptr) : m_ptr(m_ptr) {}
+
+            //Default copy ctor and operator are available implicitly
+
+            T *m_ptr;
+        };
+
+        Iterator begin() { return Iterator(data); }
+        Iterator end() { return Iterator(data + m_size); }
+        const Iterator begin() const { return Iterator(data); }
+        const Iterator end() const { return Iterator(data + m_size); }
 
         // Debug info methods
     public:
