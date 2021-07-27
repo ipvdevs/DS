@@ -211,28 +211,9 @@ TEST_CASE("ITERATOR", "[ITERATOR]")
         REQUIRE(EQUAL_FLAG);
     }
 
-    SECTION("DEFAULT ITERATOR WITH CONST CONTAINER")
-    {
-        const dynamic_array<int> vec = {1, 2, 3, 4};
-        bool EQUAL_FLAG = true;
-
-        dynamic_array<int>::Iterator it = vec.begin();
-
-        for (int num = 1; it != vec.end(); num++, it++)
-        {
-            if (*it != num)
-            {
-                EQUAL_FLAG = false;
-                break;
-            }
-        }
-
-        REQUIRE(EQUAL_FLAG);
-    }
-
     SECTION("RANGE-BASED-FOR")
     {
-        const dynamic_array<int> vec = {1, 2, 3, 4};
+        dynamic_array<int> vec = {1, 2, 3, 4};
         bool EQUAL_FLAG = true;
 
         int num = 1;

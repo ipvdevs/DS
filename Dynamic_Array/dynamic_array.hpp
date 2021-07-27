@@ -120,12 +120,12 @@ namespace ds
 
             // Operator[] is consciously omitted
 
-            const T operator*() const
+            const T& operator*() const
             {
                 return *m_ptr;
             }
 
-            T operator*()
+            T& operator*()
             {
                 return *m_ptr;
             }
@@ -173,7 +173,7 @@ namespace ds
         private:
             // Private ctor - Forbid user to create iterator
             // The parent class is responsible for the above-mentioned action
-            
+
             Iterator(T *m_ptr = nullptr) : m_ptr(m_ptr) {}
 
             //Default copy ctor and operator are available implicitly
@@ -183,8 +183,9 @@ namespace ds
 
         Iterator begin() { return Iterator(data); }
         Iterator end() { return Iterator(data + m_size); }
-        const Iterator begin() const { return Iterator(data); }
-        const Iterator end() const { return Iterator(data + m_size); }
+
+        // TODO - Const_Iterator
+
 
         // Debug info methods
     public:
