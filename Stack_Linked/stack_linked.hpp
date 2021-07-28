@@ -30,7 +30,7 @@ namespace ds
         void push(const DataType &element);
 
         // Remove the last element in the stack
-        // Note: If DataType is too heavy void might be a better option
+        // Note: If DataType is too heavy VOID might be a better option
         // Complexity: O(1) Constant
         DataType pop();
 
@@ -104,6 +104,18 @@ namespace ds
     }
 
     template <class DataType>
+    inline Stack<DataType> &Stack<DataType>::operator=(const Stack &other)
+    {
+        if (this != &other)
+        {
+            this->clear();
+            this->copyFrom(other);
+        }
+
+        return *this;
+    }
+
+    template <class DataType>
     inline Stack<DataType>::~Stack()
     {
         clear();
@@ -130,7 +142,7 @@ namespace ds
     {
         if (this->empty())
         {
-            throw std::logic_error("Invalid Operation: Cannot pop from empty stack!");
+            throw std::underflow_error("Invalid Operation: Cannot pop from empty stack!");
         }
 
         Node *toRemove = tos;
@@ -159,7 +171,7 @@ namespace ds
     {
         if (this->empty())
         {
-            throw std::logic_error("Invalid Operation: Cannot pop from empty stack!");
+            throw std::underflow_error("Invalid Operation: Cannot pop from empty stack!");
         }
 
         return tos->m_data;
