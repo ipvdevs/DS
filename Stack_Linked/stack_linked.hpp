@@ -180,12 +180,7 @@ namespace ds
     template <class DataType>
     inline const DataType &Stack<DataType>::top() const
     {
-        if (this->empty())
-        {
-            throw std::underflow_error("Invalid Operation: Cannot pop from empty stack!");
-        }
-
-        return tos->m_data;
+        return const_cast<Stack &>(*this).top();
     }
 }
 
