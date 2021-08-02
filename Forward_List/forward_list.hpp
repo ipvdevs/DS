@@ -32,18 +32,20 @@ namespace ds
         // Assignement operator
         forward_list<ValueType> &operator=(const forward_list<ValueType> &other);
 
+        ~forward_list() { clear(); };
+
         /* Insert methods */
 
-        // Add new element at the begining
+        // Add new element at the begining (head)
         void push_front(const ValueType &el);
 
-        // TODO
+        // Add new element at the end (tail)
         void push_back(const ValueType &el);
 
         /* Remove methods */
 
         // Remove the element at the begining
-        void pop_front(const ValueType &el);
+        void pop_front();
 
         // Clear the container contet
         void clear();
@@ -132,11 +134,12 @@ namespace ds
 
             Node *toCopy = other.head;
 
-            while (toCopy->next) // != nullptr
+            while (toCopy->pNext) // != nullptr
             {
                 toCopy = toCopy->pNext;
 
                 tail->pNext = new Node(toCopy->data);
+                tail = tail->pNext;
                 ++m_size;
             }
         }
@@ -161,24 +164,24 @@ namespace ds
     }
 
     template <typename ValueType>
-    inline void forward_list<ValueType>::pop_front(const ValueType &el)
+    inline void forward_list<ValueType>::pop_front()
     {
-        if (!empty())
+        if (empty())
         {
-            Node *toDestroy = head;
-            head = head->pNext;
-            delete toDestroy;
-            --m_size;
-
-            // Otherwise tail would be a dangling pointer
-            if (head == nullptr)
-            {
-                assert(size() == 0);
-                tail == nullptr;
-            }
+            throw std::logic_error("Cannot perform pop_front : list is empty!");
         }
 
-        throw std::logic_error("Cannot perform pop_front : list is empty!");
+        Node *toDestroy = head;
+        head = head->pNext;
+        delete toDestroy;
+        --m_size;
+
+        // Otherwise tail would be a dangling pointer
+        if (head == nullptr)
+        {
+            assert(size() == 0);
+            tail = nullptr;
+        }
     }
 
     template <typename ValueType>
@@ -203,11 +206,13 @@ namespace ds
 
             push_front(el);
         }
+        else
+        {
+            tail->pNext = new Node(el);
+            tail = tail->pNext;
 
-        tail->pNext = new Node(el);
-        tail = tail->pNext;
-
-        ++m_size;
+            ++m_size;
+        }
     }
 
     template <typename ValueType>
