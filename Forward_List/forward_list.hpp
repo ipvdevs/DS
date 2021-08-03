@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <cassert>
 #include <stdexcept>
+#include <iostream>
 
 namespace ds
 {
@@ -62,6 +63,13 @@ namespace ds
 
         // Return the size (count of elements) in the container
         unsigned int size() const;
+
+        // Print the forward_list to a given stream
+        // The ValueType must have predefined operator <<
+        void print(std::ostream &out) const;
+
+        /* Algorithms */
+        void reverse();
 
         /* Helpers */
     private:
@@ -240,11 +248,56 @@ namespace ds
         throw std::logic_error("Cannot access element: list is empty!");
     }
 
-    // template <typename ValueType>
-    // inline const ValueType &forward_list<ValueType>::front() const
-    // {
-    //     return const_cast<ValueType &>(*this).front();
-    // }
+    template <typename ValueType>
+    inline const ValueType &forward_list<ValueType>::front() const
+    {
+        return const_cast<forward_list &>(*this).front();
+    }
+
+    template <typename ValueType>
+    void forward_list<ValueType>::print(std::ostream &out) const
+    {
+        try
+        {
+            // TODO: Write and use iterators.
+            Node *toPrint = head;
+            while (toPrint)
+            {
+                out << toPrint->data << " "; // Error-prone (operator<< is necessary)
+                toPrint = toPrint = toPrint->pNext;
+            }
+
+            out << std::endl;
+        }
+        catch (...)
+        {
+            std::cerr << "Printing error occurred!" << std::endl;
+            throw;
+        }
+    }
+
+    template <typename ValueType>
+    inline void forward_list<ValueType>::reverse()
+    {
+        Node *cur = head;
+        if (head == nullptr || head == tail)
+        {
+            return;
+        }
+
+        Node *lastNode = nullptr;
+        Node *next = cur->pNext;
+        while (cur != tail)
+        {
+            cur->pNext = lastNode;
+            lastNode = cur;
+            cur = next;
+            next = cur->pNext;
+        }
+
+        std::swap(head, tail);
+        head->pNext = lastNode;
+    }
 
 } // namespace ds
 
