@@ -116,7 +116,10 @@ namespace ds
     inline forward_list<ValueType>::forward_list(const forward_list<ValueType> &other)
         : head(nullptr), tail(nullptr), m_size(0)
     {
+        if (other.m_size) 
+        {
         copy(other);
+        }
     }
 
     template <typename ValueType>
