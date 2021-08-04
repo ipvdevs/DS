@@ -14,7 +14,8 @@ namespace ds
     public:
         // Public Methods (Interface)
 
-        /* Constructors;
+        /* 
+         * Constructors;
          * Gang of Three (Four with assignement operator)
          */
 
@@ -69,6 +70,8 @@ namespace ds
         void print(std::ostream &out) const;
 
         /* Algorithms */
+        // Reverse the order of elements
+        // Complexity: O(n) time; O(1) space.
         void reverse();
 
         /* Helpers */
@@ -98,7 +101,7 @@ namespace ds
 
     template <typename ValueType>
     inline forward_list<ValueType>::forward_list(unsigned int n, const ValueType &val)
-        : head(nullptr), tail(nullptr), m_size(0)
+        : forward_list()
     {
         for (int i = 0; i < n; i++)
             push_back(val);
@@ -106,7 +109,7 @@ namespace ds
 
     template <typename ValueType>
     inline forward_list<ValueType>::forward_list(const std::initializer_list<ValueType> &il)
-        : head(nullptr), tail(nullptr), m_size(0)
+        : forward_list()
     {
         for (const ValueType &val : il)
             push_back(val);
@@ -114,12 +117,9 @@ namespace ds
 
     template <typename ValueType>
     inline forward_list<ValueType>::forward_list(const forward_list<ValueType> &other)
-        : head(nullptr), tail(nullptr), m_size(0)
+        : forward_list()
     {
-        if (other.m_size) 
-        {
         copy(other);
-        }
     }
 
     template <typename ValueType>
@@ -137,9 +137,15 @@ namespace ds
     template <typename ValueType>
     inline void forward_list<ValueType>::copy(const forward_list<ValueType> &other)
     {
+        if (other.head == nullptr)
+        {
+            // The source list is empty therefore cannot perform copy operation.
+            return;
+        }
+
         try
         {
-            head = new Node(other.head->data);
+            head = new Node(other.head->data); // new might throw an exception
             tail = head;
             ++m_size;
 
@@ -179,7 +185,7 @@ namespace ds
     {
         if (empty())
         {
-            throw std::logic_error("Cannot perform pop_front : list is empty!");
+            throw std::logic_error("Cannot perform pop_front : the list is empty!");
         }
 
         Node *toDestroy = head;
@@ -199,7 +205,7 @@ namespace ds
     inline void forward_list<ValueType>::push_front(const ValueType &el)
     {
         head = new Node(el, head);
-        if (size() == 0)
+        if (m_size == 0)
         {
             tail = head;
         }
@@ -241,8 +247,6 @@ namespace ds
     template <typename ValueType>
     inline ValueType &forward_list<ValueType>::front()
     {
-        assert(head != nullptr);
-
         if (!empty())
         {
             return head->data;
@@ -267,7 +271,7 @@ namespace ds
             while (toPrint)
             {
                 out << toPrint->data << " "; // Error-prone (operator<< is necessary)
-                toPrint = toPrint = toPrint->pNext;
+                toPrint = toPrint->pNext;
             }
 
             out << std::endl;
@@ -282,24 +286,24 @@ namespace ds
     template <typename ValueType>
     inline void forward_list<ValueType>::reverse()
     {
-        Node *cur = head;
         if (head == nullptr || head == tail)
         {
             return;
         }
 
-        Node *lastNode = nullptr;
-        Node *next = cur->pNext;
-        while (cur != tail)
+        tail = head;
+
+        Node *prevNode = nullptr;
+
+        while (head->pNext)
         {
-            cur->pNext = lastNode;
-            lastNode = cur;
-            cur = next;
-            next = cur->pNext;
+            Node *nextNode = head->pNext;
+            head->pNext = prevNode;
+            prevNode = head;
+            head = nextNode;
         }
 
-        std::swap(head, tail);
-        head->pNext = lastNode;
+        head->pNext = prevNode;
     }
 
 } // namespace ds
