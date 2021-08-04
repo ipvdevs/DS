@@ -11,6 +11,9 @@ namespace ds
     template <typename ValueType>
     class forward_list
     {
+        // Forward declaration
+        struct Node;
+
     public:
         // Public Methods (Interface)
 
@@ -68,6 +71,59 @@ namespace ds
         // Print the forward_list to a given stream
         // The ValueType must have predefined operator <<
         void print(std::ostream &out) const;
+
+        /* Forward iterator */
+    public:
+        class Iterator
+        {
+            friend forward_list;
+
+        public:
+            /* Access operators */
+
+            // This operator is allowing modify access to the data of each node
+            ValueType &operator*() const { return nodePtr->data; };
+            ValueType *operator->() { return nodePtr->data; };
+
+            /* Comparison operators */
+            bool operator==(const Iterator &other) { return this->nodePtr == other.nodePtr; }
+            bool operator!=(const Iterator &other) { return !(*this == other); }
+            bool operator>(const Iterator &other) { return this->nodePtr > other.nodePtr; }
+            bool operator<(const Iterator &other) { return other > *this; }
+            bool operator>=(const Iterator &other) { return !(*this < other); }
+            bool operator<=(const Iterator &other) { return !(*this > other); }
+
+            /* Arithmetic operations */
+            // Prefix increment
+            Iterator &operator++()
+            {
+                // Check if the pointer is in a valid state.
+                if (nodePtr)
+                    nodePtr = nodePtr->pNext;
+
+                return *this;
+            }
+
+            // Postfix increment
+            Iterator operator++(int)
+            {
+                Iterator itCopy(*this); // Calling the default copy constructor
+                ++(*this);
+                return itCopy;
+            }
+
+        private:
+            // Users should not create iterators
+            Iterator(Node *nodePtr = nullptr)
+                : nodePtr(nodePtr) {}
+
+            Node *nodePtr;
+        };
+
+        // Returns iterator pointing to the head
+        Iterator begin() const { return Iterator(head); };
+        // Returns iterator pointing to the past tail element
+        Iterator end() const { return Iterator(tail->pNext); };
 
         /* Algorithms */
         // Reverse the order of elements
