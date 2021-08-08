@@ -32,6 +32,54 @@ namespace ds
             friend List;
 
         public:
+            typedef ValueType &reference;
+            typedef ValueType *pointer;
+
+            // This operator allows modify access to the data of each node
+            reference operator*() const { return ptr->data; }
+            pointer operator->() { return &ptr->data; };
+
+            // Prefix increment - increment only if end is not reached
+            Iterator &operator++()
+            {
+                if (ptr)
+                    ptr = ptr->next;
+
+                return *ptr;
+            }
+
+            // Postfix increment
+            Iterator operator++(int)
+            {
+                Iterator copy(*this); // Defaul copy constructor is called.
+                ++(*this);            // Calling the prefix increment with
+                                      // the nullptr check gurantee.
+                return copy;
+            }
+
+            // Prefix decrement - decrement only if it is not pointng the begining
+            Iterator &operator--()
+            {
+                if (ptr != head)
+                    ptr = ptr->prev;
+
+                return *ptr;
+            }
+
+            // Postfix decrement
+            Iterator operator--(int)
+            {
+                Iterator copy(*this); // Defaul copy constructor is called.
+                --(*this);            // Calling the prefix decrement with
+                                      // the begin check gurantee.
+
+                return copy;
+            }
+
+            // Comparison operators
+            bool operator==(const Iterator &rhs) const { return ptr == rhs.ptr; }
+            bool operator!=(const Iterator &rhs) const { return !(*this == rhs); }
+
         private:
             // Concealing the Iterator constructor from the user.
             Iterator(Node *ptr = nullptr)
@@ -40,7 +88,12 @@ namespace ds
             Node *ptr;
         };
 
+        // Returns an iterator to the first element (head) of the list.
+        // If the list is empty begin() is equal to end().
         Iterator begin() const { return Iterator(head); };
+
+        // Returns iterator pointing to the past tail element.
+        Iterator end() const { return Iterator(); };
 
         /* Modifiers */
 
