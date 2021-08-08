@@ -45,7 +45,7 @@ namespace ds
                 if (ptr)
                     ptr = ptr->next;
 
-                return *ptr;
+                return *this;
             }
 
             // Postfix increment
@@ -60,10 +60,10 @@ namespace ds
             // Prefix decrement - decrement only if it is not pointng the begining
             Iterator &operator--()
             {
-                if (ptr != head)
+                if (ptr)
                     ptr = ptr->prev;
 
-                return *ptr;
+                return *this;
             }
 
             // Postfix decrement
@@ -99,27 +99,34 @@ namespace ds
 
         // Insert methods
 
-        void insert();
+        // Inserts value before given position (pos)
+        // Time complexity: O(1)
+        Iterator insert(Iterator pos, const ValueType &value);
 
         // Appends the given element value to the end (tail) of the list.
+        // Time complexity: O(1)
         void push_back(const ValueType &);
+
+        // Add new element at the begining (head) of the list
+        // Time complexity: O(1)
+        void push_front(const ValueType &);
 
         /* Information methods */
 
+        // Retrieve the current count of the elements in the list.
+        // Time complexity: O(1)
         size_t size() const;
 
+        // Check if the list is currently empty.
+        // Time complexity: O(1)
         bool empty() const;
 
     private:
-        // Concealing the Node class from the user.
-        // The List class is responsible for nodes.
-        class Node
+        struct Node
         {
-        public:
             Node(const ValueType &data, Node *prev = nullptr, Node *next = nullptr)
                 : data(data), prev(prev), next(next) {}
 
-        private:
             ValueType data;
             Node *prev;
             Node *next;
@@ -135,8 +142,68 @@ namespace ds
         : head(nullptr), tail(nullptr), m_size(0) {}
 
     template <typename ValueType>
+    inline List<ValueType>::List(size_t count, const ValueType &value)
+        : List()
+    {
+        for (size_t i = 0; i < count; i++)
+            push_back(value);
+    }
+
+    template <typename ValueType>
+    typename List<ValueType>::Iterator List<ValueType>::insert(Iterator pos, const ValueType &value)
+    {
+        if (pos == nullptr)
+        {
+            push_back(value);
+            return Iterator(tail);
+        }
+        else if (pos.ptr == head)
+        {
+            head->prev = new Node(value, nullptr, head);
+            head = head->prev;
+            ++m_size;
+
+            return Iterator(head);
+        }
+        else
+        {
+            Node *prev = pos.ptr->prev;
+            pos.ptr->prev = new Node(value, prev, pos.ptr);
+            prev->next = pos.ptr->prev;
+
+            ++m_size;
+            return Iterator(pos.ptr->prev);
+        }
+    }
+
+    template <typename ValueType>
     inline void List<ValueType>::push_back(const ValueType &value)
     {
+        if (m_size == 0)
+        {
+            // List is empty.
+            // Regardless of the given pos, create a list with one element with
+            // the specified value.
+
+            assert(head == nullptr);
+            assert(tail == nullptr);
+
+            head = new Node(value);
+            tail = head;
+        }
+        else
+        {
+            tail->next = new Node(value, tail);
+            tail = tail->next;
+        }
+
+        ++m_size;
+    }
+
+    template <typename ValueType>
+    inline void List<ValueType>::push_front(const ValueType &value)
+    {
+        insert(Iterator(head), value);
     }
 
     template <typename ValueType>
