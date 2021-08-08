@@ -181,10 +181,6 @@ namespace ds
     {
         if (m_size == 0)
         {
-            // List is empty.
-            // Regardless of the given pos, create a list with one element with
-            // the specified value.
-
             assert(head == nullptr);
             assert(tail == nullptr);
 
