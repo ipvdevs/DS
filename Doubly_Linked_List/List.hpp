@@ -5,6 +5,9 @@
 #include <cassert>
 #include <stdexcept>
 
+/* Initializer list */
+#include <initializer_list>
+
 namespace ds
 {
     template <typename ValueType>
@@ -16,13 +19,32 @@ namespace ds
     public:
         /* Constructors & Destructor & Rule of three (four) */
 
-        // Default constructor.
+        // Default constructor
         // Constructs an empty doubly linked list
         List();
 
-        // Fill constructor.
-        // Constructs a doubly linked list with count copies of elements with given value.
+        // Fill constructor
+        // Constructs a doubly linked list with count copies of elements with given value
         List(size_t count, const ValueType &value);
+
+        // Initializer list constructor
+        // Constructs a list with the elements from the il
+        List(const std::initializer_list<ValueType> &il);
+
+        // Copy constructor (rule of three)
+        // Constructs a list - clone of a given source list
+        List(const List &other);
+
+        // Assignment operator (rule of four)
+        // Replaces the contents of the list with a copy of the contents of another list
+        // Using the copy-swap idiom (copy epsilon version)
+        List<ValueType> &operator=(List other);
+
+        // Exchanges the contents of two lists
+        // Size may differ
+        void swap(List &other); // nothrow
+
+        ~List() { clear(); };
 
         /* Bidirectional iterator */
         class Iterator
@@ -88,11 +110,11 @@ namespace ds
             Node *ptr;
         };
 
-        // Returns an iterator to the first element (head) of the list.
-        // If the list is empty begin() is equal to end().
+        // Returns an iterator to the first element (head) of the list
+        // If the list is empty begin() is equal to end()
         Iterator begin() const { return Iterator(head); };
 
-        // Returns iterator pointing to the past tail element.
+        // Returns iterator pointing to the past tail element
         Iterator end() const { return Iterator(); };
 
         /* Modifiers */
@@ -111,6 +133,24 @@ namespace ds
         // Time complexity: O(1)
         void push_front(const ValueType &);
 
+        // Remove methods
+
+        // Removes value at given position (pos)
+        // Time complexity: O(1)
+        Iterator erase(Iterator pos);
+
+        // Removes the element at the beginning (head) of the list
+        // Time complexity: O(1)
+        void pop_front();
+
+        // Removes the element before the end (tail) of the list
+        // Time complexity: O(1)
+        void pop_back();
+
+        // Removes all elements from the list, leaving the container empty
+        // Time complexity: O(n)
+        void clear();
+
         /* Information methods */
 
         // Retrieve the current count of the elements in the list.
@@ -120,6 +160,10 @@ namespace ds
         // Check if the list is currently empty.
         // Time complexity: O(1)
         bool empty() const;
+
+        // Helpers
+    private:
+        void copyFrom(const List &src);
 
     private:
         struct Node
@@ -150,7 +194,72 @@ namespace ds
     }
 
     template <typename ValueType>
-    typename List<ValueType>::Iterator List<ValueType>::insert(Iterator pos, const ValueType &value)
+    inline List<ValueType>::List(const std::initializer_list<ValueType> &il)
+        : List()
+    {
+        for (const ValueType &el : il)
+            push_back(el);
+    }
+
+    template <typename ValueType>
+    inline List<ValueType>::List(const List &other)
+        : List()
+    {
+        copyFrom(other);
+    }
+
+    template <typename ValueType>
+    inline List<ValueType> &List<ValueType>::operator=(List other)
+    {
+        other.swap(*this); // Non-throwing swap
+
+        return *this;
+    }
+
+    template <typename ValueType>
+    void List<ValueType>::swap(List &other) // nothrow
+    {
+        using std::swap;
+        swap(this->m_size, other.m_size);
+        swap(this->head, other.head);
+        swap(this->tail, other.tail);
+    }
+
+    template <typename ValueType>
+    void List<ValueType>::clear()
+    {
+        while (!empty())
+            pop_front();
+    }
+
+    template <typename ValueType>
+    void List<ValueType>::copyFrom(const List &src)
+    {
+        if (src.empty())
+            return;
+
+        // This method is meant to copyFrom from another list source,
+        // but is not responsible for freeing the occupied memory
+        // of the current list, consequently if it is not used on an
+        // empty list, memory leaks are possible.
+
+        head = new Node(src.head->data);
+        tail = head;
+        ++m_size;
+
+        Node *toCopy = src.head->next;
+        while (toCopy)
+        {
+            tail->next = new Node(toCopy->data, tail);
+            tail = tail->next;
+            ++m_size;
+
+            toCopy = toCopy->next;
+        }
+    }
+
+    template <typename ValueType>
+    inline typename List<ValueType>::Iterator List<ValueType>::insert(Iterator pos, const ValueType &value)
     {
         if (pos == nullptr)
         {
@@ -179,8 +288,12 @@ namespace ds
     template <typename ValueType>
     inline void List<ValueType>::push_back(const ValueType &value)
     {
-        if (m_size == 0)
+        if (empty())
         {
+            // List is empty.
+            // Regardless of the given pos, create a list with one element with
+            // the specified value.
+
             assert(head == nullptr);
             assert(tail == nullptr);
 
@@ -200,6 +313,81 @@ namespace ds
     inline void List<ValueType>::push_front(const ValueType &value)
     {
         insert(Iterator(head), value);
+    }
+
+    template <typename ValueType>
+    inline typename List<ValueType>::Iterator List<ValueType>::erase(Iterator pos)
+    {
+        if (empty() || pos.ptr == nullptr)
+            return end();
+
+        Node *toRemove = nullptr;
+
+        if (pos.ptr == head)
+        {
+            toRemove = head;
+
+            head = head->next;
+            if (head)
+            {
+                head->prev = nullptr;
+            }
+            else
+            {
+                tail = nullptr;
+            }
+
+            delete toRemove;
+            --m_size;
+
+            return begin();
+        }
+        else if (pos.ptr == tail)
+        {
+            toRemove = tail;
+
+            tail = tail->prev;
+
+            if (tail)
+            {
+                tail->next = nullptr;
+            }
+            else
+            {
+                head = nullptr;
+            }
+
+            delete toRemove;
+            --m_size;
+
+            return end();
+        }
+        else
+        {
+            Node *prev = pos.ptr->prev, *next = pos.ptr->next;
+
+            toRemove = pos.ptr;
+            prev->next = pos.ptr->next;
+            next->prev = pos.ptr->prev;
+            pos.ptr = pos.ptr->next;
+
+            delete toRemove;
+            --m_size;
+
+            return Iterator(pos.ptr);
+        }
+    }
+
+    template <typename ValueType>
+    inline void List<ValueType>::pop_front()
+    {
+        erase(begin());
+    }
+
+    template <typename ValueType>
+    inline void List<ValueType>::pop_back()
+    {
+        erase(Iterator(tail));
     }
 
     template <typename ValueType>
