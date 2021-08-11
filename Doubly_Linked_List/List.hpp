@@ -391,12 +391,22 @@ namespace ds
     template <typename ValueType>
     inline void List<ValueType>::pop_front()
     {
+        if (empty())
+        {
+            throw std::logic_error("pop_front(): Cannot perform pop. The list is empty!");
+        }
+
         erase(begin());
     }
 
     template <typename ValueType>
     inline void List<ValueType>::pop_back()
     {
+        if (empty())
+        {
+            throw std::logic_error("pop_back(): Cannot perform pop. The list is empty!");
+        }
+        
         erase(Iterator(tail));
     }
 
