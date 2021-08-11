@@ -117,6 +117,16 @@ namespace ds
         // Returns iterator pointing to the past tail element
         Iterator end() const { return Iterator(); };
 
+        /* Access methods */
+
+        // Returns a reference to the first (head) element in the list
+        ValueType &front();
+        const ValueType &front() const;
+
+        // Returns a reference to the last (tail) element in the list
+        ValueType &back();
+        const ValueType &back() const;
+
         /* Modifiers */
 
         // Insert methods
@@ -388,6 +398,40 @@ namespace ds
     inline void List<ValueType>::pop_back()
     {
         erase(Iterator(tail));
+    }
+
+    template <typename ValueType>
+    inline ValueType &List<ValueType>::front()
+    {
+        if (empty())
+        {
+            throw std::logic_error("front(): Cannot access an element. The list is empty!");
+        }
+
+        return head->data;
+    }
+
+    template <typename ValueType>
+    inline const ValueType &List<ValueType>::front() const
+    {
+        return const_cast<List<ValueType> &>(*this).front();
+    }
+
+    template <typename ValueType>
+    inline ValueType &List<ValueType>::back()
+    {
+        if (empty())
+        {
+            throw std::logic_error("back(): Cannot access an element. The list is empty!");
+        }
+
+        return tail->data;
+    }
+
+    template <typename ValueType>
+    inline const ValueType &List<ValueType>::back() const
+    {
+        return const_cast<List<ValueType> &>(*this).back();
     }
 
     template <typename ValueType>
