@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "../Catch2/catch.hpp"
-#include "forward_list.hpp"
+#include "List.hpp"
 
 using namespace ds;
 
@@ -8,7 +8,7 @@ TEST_CASE("CONSTRUCTORS", "[DEFAULT][COPY][OPERATOR=]")
 {
     SECTION("DEFAULT")
     {
-        forward_list<int> list;
+        List<int> list;
 
         REQUIRE(list.empty());
         REQUIRE(list.size() == 0);
@@ -18,7 +18,7 @@ TEST_CASE("CONSTRUCTORS", "[DEFAULT][COPY][OPERATOR=]")
     {
         const int N = 3, val = 15;
         bool valFlag = true;
-        forward_list<int> list(N, val);
+        List<int> list(N, val);
 
         CHECK_FALSE(list.empty());
         CHECK(list.size() == N);
@@ -40,7 +40,7 @@ TEST_CASE("CONSTRUCTORS", "[DEFAULT][COPY][OPERATOR=]")
     {
         const int N = 3, val = 15;
         bool valFlag = true;
-        forward_list<int> list = {val, val, val};
+        List<int> list = {val, val, val};
 
         CHECK_FALSE(list.empty());
         CHECK(list.size() == N);
@@ -62,8 +62,8 @@ TEST_CASE("CONSTRUCTORS", "[DEFAULT][COPY][OPERATOR=]")
     {
         const int N = 3;
         bool valFlag = true;
-        forward_list<int> list = {1, 2, 3};
-        forward_list<int> listCopy = list;
+        List<int> list = {1, 2, 3};
+        List<int> listCopy = list;
 
         CHECK_FALSE(listCopy.empty());
         CHECK(listCopy.size() == N);
@@ -87,8 +87,8 @@ TEST_CASE("CONSTRUCTORS", "[DEFAULT][COPY][OPERATOR=]")
     {
         const int N = 3;
         bool valFlag = true;
-        forward_list<int> list = {1, 2, 3};
-        forward_list<int> listAssignment;
+        List<int> list = {1, 2, 3};
+        List<int> listAssignment;
 
         listAssignment = list;
 
@@ -115,7 +115,7 @@ TEST_CASE("OPERATIONS", "[PUSH][POP][ACCESS]")
 {
     SECTION("PUSH_FRONT")
     {
-        forward_list<char> list;
+        List<char> list;
 
         list.push_front('a');
         list.push_front('b');
@@ -131,7 +131,7 @@ TEST_CASE("OPERATIONS", "[PUSH][POP][ACCESS]")
 
     SECTION("PUSH_BACK")
     {
-        forward_list<char> list;
+        List<char> list;
 
         list.push_back('a');
         list.push_back('b');
@@ -143,7 +143,7 @@ TEST_CASE("OPERATIONS", "[PUSH][POP][ACCESS]")
 
     SECTION("POP_FRONT")
     {
-        forward_list<char> list;
+        List<char> list;
 
         list.push_front('a');
 
@@ -157,7 +157,7 @@ TEST_CASE("OPERATIONS", "[PUSH][POP][ACCESS]")
 
     SECTION("POP_FRONT")
     {
-        forward_list<char> list;
+        List<char> list;
 
         list.push_front('a');
 
