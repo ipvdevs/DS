@@ -171,6 +171,21 @@ namespace ds
         // Time complexity: O(1)
         bool empty() const;
 
+        /* Operations */
+
+        // Transfer elements from given list, inserting them at a selected position.
+        // Time complexity: Up to O(m), where m is the size of the transferred list
+        void splice(Iterator position, const List &src);
+
+        // Transfer elements from given list range [first, last),
+        // inserting them at a selected position.
+        // Time complexity: Up to O(m), where m is the size of the transferred list
+        void splice(Iterator position, const List &src, Iterator first, Iterator last);
+
+        // Remove all elements from the list with a specified value
+        // Time complexity: O(n)
+        void remove(const ValueType &val);
+
         // Helpers
     private:
         void copyFrom(const List &src);
@@ -406,7 +421,7 @@ namespace ds
         {
             throw std::logic_error("pop_back(): Cannot perform pop. The list is empty!");
         }
-        
+
         erase(Iterator(tail));
     }
 
@@ -454,6 +469,37 @@ namespace ds
     inline bool List<ValueType>::empty() const
     {
         return m_size == 0;
+    }
+
+    template <typename ValueType>
+    inline void List<ValueType>::splice(Iterator position, const List<ValueType> &src)
+    {
+        splice(position, src, src.begin(), src.end());
+    }
+
+    template <typename ValueType>
+    inline void List<ValueType>::splice(Iterator position, const List &src, Iterator first, Iterator last)
+    {
+        for (Iterator itr = first; itr != last; ++itr)
+            insert(position, *itr);
+    }
+
+    template <typename ValueType>
+    inline void List<ValueType>::remove(const ValueType &val)
+    {
+        Iterator itr = begin();
+
+        while (itr != end())
+        {
+            if (*itr == val)
+            {
+                itr = erase(itr);
+            }
+            else
+            {
+                ++itr;
+            }
+        }
     }
 
 } // namespace ds
