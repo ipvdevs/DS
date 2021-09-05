@@ -10,12 +10,12 @@ The repository is a collection of own implementations of some popular data struc
 |               |                                                                                               |        |            |
 |               |                                                                                               |        |            |
 
-[dynamic_array.hpp]: ./Dynamic_Array/dynamic_array.hpp
-[dyn_arr_tests.cpp]: ./Dynamic_Array/dyn_arr_tests.cpp
-[stack_linked.hpp]: ./Stack_Linked/stack_linked.hpp
-[stack_tests.cpp]: ./Stack_Linked/stack_tests.cpp
-[list.hpp]: ./Doubly_Linked_List/list.hpp
-[list_tests.cpp]: ./Doubly_Linked_List/list_tests.cpp
+[dynamic_array.hpp]: ./DynamicArray/dynamic_array.hpp
+[dyn_arr_tests.cpp]: ./DynamicArray/dyn_arr_tests.cpp
+[stack_linked.hpp]: ./StackLinked/stack_linked.hpp
+[stack_tests.cpp]: ./StackLinked/stack_tests.cpp
+[list.hpp]: ./DoublyLinkedList/list.hpp
+[list_tests.cpp]: ./DoublyLinkedList/list_tests.cpp
 
 
 
