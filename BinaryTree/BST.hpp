@@ -151,10 +151,7 @@ namespace ds
     template <typename DataType>
     inline typename BST<DataType>::Node *&BST<DataType>::find(Node *&root, const DataType &key)
     {
-        if (!root)
-            return root;
-
-        if (root->data == key)
+        if (!root || root->data == key)
             return root;
 
         if (key < root->data)
