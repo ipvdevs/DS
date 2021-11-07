@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include "../Catch2/catch.hpp"
+#include "../../Catch2/catch.hpp"
 #include "stack_linked.hpp"
 
 using namespace ds;
