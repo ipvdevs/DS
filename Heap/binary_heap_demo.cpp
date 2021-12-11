@@ -2,9 +2,9 @@
 #include <cassert>
 #include <algorithm>
 
-#include "BinaryHeap.hpp"
+#include "binary_heap.hpp"
 
-using Heap = BinaryHeap<int>;
+using Heap = ds::BinaryHeap<int>;
 
 void testInsert()
 {
