@@ -120,12 +120,12 @@ namespace ds
 
             // Operator[] is consciously omitted
 
-            const T& operator*() const
+            const T &operator*() const
             {
                 return *m_ptr;
             }
 
-            T& operator*()
+            T &operator*()
             {
                 return *m_ptr;
             }
@@ -185,7 +185,6 @@ namespace ds
         Iterator end() { return Iterator(data + m_size); }
 
         // TODO - Const_Iterator
-
 
         // Debug info methods
     public:
@@ -496,6 +495,7 @@ namespace ds
     {
         os << "Address: 0x" << this << "\nBuffer Address 0x" << data << "\nm_size: " << m_size << "\nm_capacity: " << m_capacity << std::endl;
     }
-};
+
+} // namespace ds
 
 #endif // DYNAMIC_ARRAY_GUARD
